@@ -15,17 +15,79 @@ This repository, **secretwebmaster/multiple-ga-domains**, provides a **Google An
 
 ## Usage
 
-### 1. Copy the Script to Your Project
+### Method 1: Include as External Script File
+
+#### 1. Copy the Script to Your Project
 Download or copy the **`script.js`** file and include it in your project.
 
-### 2. Add the Script to Your HTML
+#### 2. Add the Script to Your HTML
 Include the script reference in your HTML file:
 ```html
-<script src="script.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analytics Demo</title>
+  <script src="script.js"></script>
+</head>
+<body>
+  <h1>Google Analytics Tracking Template</h1>
+</body>
+</html>
 ```
 
-### 3. Configuration
-Edit **`script.js`** and update the following:
+### Method 2: Include Script Directly in HTML
+
+#### 1. Copy the Script Code
+Paste the following script directly inside your HTML file:
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analytics Demo</title>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const defaultGAId = 'DEMO_DEFAULT_ID';
+      const domainGAIds = {
+        'example1.com': 'DEMO_ID_1',  
+        'example2.com': 'DEMO_ID_2',  
+        'example3.com': 'DEMO_ID_3',  
+      };
+      const currentDomain = window.location.hostname;
+      const loadGA = (gaId) => {
+        const fullGAId = gaId.startsWith('G-') ? gaId : `G-${gaId}`;
+        const scriptTag = document.createElement('script');
+        scriptTag.async = true;
+        scriptTag.src = `https://www.googletagmanager.com/gtag/js?id=${fullGAId}`;
+        document.head.appendChild(scriptTag);
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){ dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', fullGAId);
+      };
+      const gaIdSuffix = domainGAIds[currentDomain];
+      if (gaIdSuffix) {
+        loadGA(gaIdSuffix);
+      } else {
+        console.warn("No specific GA ID found for this domain:", currentDomain);
+      }
+      loadGA(defaultGAId);
+    });
+  </script>
+</head>
+<body>
+  <h1>Google Analytics Tracking Template</h1>
+</body>
+</html>
+```
+
+---
+
+## Configuration
+Edit **`script.js`** or the inline script and update the following:
 
 #### Default GA ID:
 ```javascript
@@ -41,25 +103,6 @@ const domainGAIds = {
 };
 ```
 Replace the placeholder values with your own GA IDs.
-
----
-
-## Example
-### HTML Example:
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Analytics Demo</title>
-  <script src="script.js"></script>
-</head>
-<body>
-  <h1>Google Analytics Tracking Template</h1>
-</body>
-</html>
-```
 
 ---
 
